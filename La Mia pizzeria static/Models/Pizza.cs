@@ -8,11 +8,13 @@ namespace La_Mia_pizzeria_static.Models
         [StringLength(20, ErrorMessage ="Il nome non può avere più di 20 caratteri")]
         public string Nome { get; set; }
         
-        [Required(ErrorMessage ="Il campo ingredienti è obbligatorio")]
+        [Required(ErrorMessage = "Il campo ingredienti è obbligatorio")]
         public string Ingrediente { get; set; }
         
         [Required(ErrorMessage ="L'URL dell'immagine è obbligatoria")]
         public string Image { get; set; }
+
+        [Required(ErrorMessage = "Il campo prezzo è obbligatorio")]
         public double Prezzo { get; set; }
 
         public Pizza()
