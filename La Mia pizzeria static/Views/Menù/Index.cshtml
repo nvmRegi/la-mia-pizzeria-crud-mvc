@@ -22,12 +22,13 @@
             </tr>
         </thead>
         <tbody>
+
         @foreach(Pizza pizza in Model)
         {
             <tr>
                 <th>@pizza.Nome</th>
                 <td>@pizza.Ingrediente</td>
-                <td><img src="@pizza.Image" alt="" width=250></td>
+                <td><img src="https://localhost:7194/img/@pizza.Image" alt="" width=250></td>
                 <td>&euro;@pizza.Prezzo</td>
                 <td>
                     <a class="btn btn-info btn-sm" href="@Url.Action("Dettagli", "Menù", new {nome = pizza.Nome})">
