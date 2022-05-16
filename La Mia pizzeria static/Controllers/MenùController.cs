@@ -1,6 +1,8 @@
 ﻿using La_Mia_pizzeria_static.Models;
 using Microsoft.AspNetCore.Mvc;
 using La_Mia_pizzeria_static.Data;
+using System.Dynamic;
+using Microsoft.EntityFrameworkCore;
 
 namespace La_Mia_pizzeria_static.Controllers
 {
@@ -9,15 +11,14 @@ namespace La_Mia_pizzeria_static.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-
+            dynamic mymodel = new ExpandoObject();
             //Operazione read
-            List<Pizza> pizze = new List<Pizza>();
-
             using (MenùContext db = new MenùContext())
             {
-                pizze = db.Pizze.ToList<Pizza>();
+                mymodel.Pizza = db.Pizze.ToList<Pizza>();
+                mymodel.Ingrediente = db.Ingrediente.FromSqlRaw("SELECT ingrediente FROM Ingrediente JOIN");
             }
-            return View(pizze);
+            return View(mymodel);
         }
 
         [HttpGet]
@@ -58,7 +59,7 @@ namespace La_Mia_pizzeria_static.Controllers
 
             using(MenùContext db = new MenùContext())
             {
-                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Ingrediente, nuovaPizza.Image, nuovaPizza.Prezzo);
+                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Image, nuovaPizza.Prezzo);
 
                 db.Pizze.Add(nuovaPizzaConNome);
                 db.SaveChanges();
@@ -107,7 +108,7 @@ namespace La_Mia_pizzeria_static.Controllers
                 if(pizzaToEdit != null)
                 {
                     pizzaToEdit.Nome = model.Nome;
-                    pizzaToEdit.Ingrediente = model.Ingrediente;
+                    pizzaToEdit.Ingredienti = model.Ingredienti;
                     pizzaToEdit.Image = model.Image;
                     pizzaToEdit.Prezzo = model.Prezzo;
 

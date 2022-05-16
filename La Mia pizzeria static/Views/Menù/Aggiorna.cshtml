@@ -18,11 +18,30 @@
                     <input asp-for="Nome" class="d-block w-100" />
                     <span asp-validation-for="Nome" class="text-danger"></span>
                 </div>
-                <div class="mb-3">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="inputFormRow">
+                            <div class="input-group mb-3">
+                                <input asp-for="Ingredienti" type="text" class="form-control m-input" placeholder="Enter title" autocomplete="off">
+                                <div class="input-group-append">
+                                    <button id="removeRow" type="button" class="btn btn-danger">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="newRow"></div>
+                        <button id="addRow" type="button" class="btn btn-info">Add Row</button>
+                    </div>
+                </div>
+                <span asp-validation-for="Ingredienti" class="text-danger"></span>
+
+@*                <div class="mb-3">
                     <strong>Ingredienti:</strong>
                     <textarea asp-for="Ingrediente" rows="10" class="d-block w-100"></textarea>
                     <span asp-validation-for="Ingrediente" class="text-danger"></span>
-                </div>
+                </div>*@
+
                 <div class="mb-3">
                     <strong>Prezzo:</strong>
                     <input asp-for="Prezzo" class="d-block w-100" />
