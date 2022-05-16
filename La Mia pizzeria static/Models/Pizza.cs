@@ -1,14 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
+//using System.ComponentModel.DataAnnotations.Schema;
 
 namespace La_Mia_pizzeria_static.Models
 {
     public class Pizza
     {
+        [Key]
+        public int Id { get; set; }
+
         [Required(ErrorMessage ="Il campo nome è obbligatorio")]
         [StringLength(20, ErrorMessage ="Il nome non può avere più di 20 caratteri")]
         public string Nome { get; set; }
         
         [Required(ErrorMessage = "Il campo ingredienti è obbligatorio")]
+        //[Column(TypeName="text")]
         public string Ingrediente { get; set; }
         
         [Required(ErrorMessage ="L'URL dell'immagine è obbligatoria")]

@@ -1,6 +1,6 @@
 ﻿using La_Mia_pizzeria_static.Models;
 using Microsoft.AspNetCore.Mvc;
-using La_Mia_pizzeria_static.Utils;
+using La_Mia_pizzeria_static.Data;
 
 namespace La_Mia_pizzeria_static.Controllers
 {
@@ -9,22 +9,35 @@ namespace La_Mia_pizzeria_static.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            List<Pizza> pizze = MenùData.GetPizze();
+
+            //Operazione read
+            List<Pizza> pizze = new List<Pizza>();
+
+            using (MenùContext db = new MenùContext())
+            {
+                pizze = db.Pizze.ToList<Pizza>();
+            }
             return View(pizze);
         }
 
         [HttpGet]
-        public IActionResult Dettagli(string nome)
+        public IActionResult Dettagli(int id)
         {
-            Pizza pizzaFound = GetPizzaByNome(nome);
-
-            if(pizzaFound != null)
+            using(MenùContext db = new MenùContext())
             {
-                return View("Dettagli", pizzaFound);
-            }
-            else
-            {
-                return NotFound("La pizza " + nome + "non è stato trovata");
+                try
+                {
+                    Pizza pizzaFound = db.Pizze
+                        .Where(pizza => pizza.Id == id)
+                        .First();
+                    return View("Dettagli", pizzaFound);
+                }catch(InvalidOperationException ex)
+                {
+                    return NotFound("La pizza non è stata trovata");
+                } catch(Exception ex)
+                {
+                    return BadRequest();
+                }
             }
         }
 
@@ -40,20 +53,30 @@ namespace La_Mia_pizzeria_static.Controllers
         {
             if(!ModelState.IsValid)
             {
-                return View("FormPost", nuovaPizza);
+                return View("FormPizza", nuovaPizza);
             }
 
-            Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Ingrediente, nuovaPizza.Image, nuovaPizza.Prezzo);
-            
-            MenùData.GetPizze().Add(nuovaPizzaConNome);
+            using(MenùContext db = new MenùContext())
+            {
+                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Ingrediente, nuovaPizza.Image, nuovaPizza.Prezzo);
 
+                db.Pizze.Add(nuovaPizzaConNome);
+                db.SaveChanges();
+            }
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public IActionResult Aggiorna(string nome)
+        public IActionResult Aggiorna(int id)
         {
-            Pizza pizzaToEdit = GetPizzaByNome(nome);
+            Pizza pizzaToEdit = null;
+
+            using(MenùContext db = new MenùContext())
+            {
+                pizzaToEdit = db.Pizze
+                    .Where(pizza => pizza.Id == id)
+                    .First();
+            }
 
             if (pizzaToEdit == null)
             {
@@ -61,73 +84,65 @@ namespace La_Mia_pizzeria_static.Controllers
             }
             else
             {
-                return View("Aggiorna", pizzaToEdit);
+                return View("aggiorna", pizzaToEdit);
             }
         }
 
         [HttpPost]
-        public IActionResult Aggiorna(string nome, Pizza model)
+        public IActionResult Aggiorna(int id, Pizza model)
         {
             if (!ModelState.IsValid)
             {
                 return View("Aggiorna", model);
             }
 
-            Pizza pizzaOriginal = GetPizzaByNome(nome);
+            Pizza pizzaToEdit = null;
 
-            if (pizzaOriginal != null)
+            using(MenùContext db = new MenùContext())
             {
-                pizzaOriginal.Nome = model.Nome;
-                pizzaOriginal.Ingrediente = model.Ingrediente;
-                pizzaOriginal.Image = model.Image;
-                pizzaOriginal.Prezzo = model.Prezzo;
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
+                pizzaToEdit = db.Pizze
+                    .Where(pizza => pizza.Id == id)
+                    .First();
 
-        private Pizza GetPizzaByNome(string nome)
-        {
-            Pizza pizzaFound = null;
-
-            foreach (Pizza pizza in MenùData.GetPizze())
-            {
-                if (pizza.Nome == nome)
+                if(pizzaToEdit != null)
                 {
-                    pizzaFound = pizza;
-                    break;
+                    pizzaToEdit.Nome = model.Nome;
+                    pizzaToEdit.Ingrediente = model.Ingrediente;
+                    pizzaToEdit.Image = model.Image;
+                    pizzaToEdit.Prezzo = model.Prezzo;
+
+                    db.SaveChanges();
+
+                    return RedirectToAction("index");
+                }
+                else
+                {
+                    return NotFound();
                 }
             }
-            return pizzaFound;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Elimina(string nome)
+        public IActionResult Elimina(int id)
         {
-            int indiceDaRimuovere = -1;
-
-            List<Pizza> listaPizze = MenùData.GetPizze();
-            for(int i = 0; i < listaPizze.Count; i++)
+            using(MenùContext db = new MenùContext())
             {
-                if(listaPizze[i].Nome == nome)
-                {
-                    indiceDaRimuovere = i;
-                }
-            }
-
-            if(indiceDaRimuovere >= 0)
-            {
-                MenùData.GetPizze().RemoveAt(indiceDaRimuovere);
+                Pizza pizzaToDelete = db.Pizze
+                    .Where(pizza => pizza.Id == id)
+                    .First();
                 
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                return NotFound();
+                if(pizzaToDelete != null)
+                {
+                    db.Pizze.Remove(pizzaToDelete);
+                    db.SaveChanges();
+                    
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
         }
     }
