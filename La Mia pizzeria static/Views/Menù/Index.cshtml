@@ -1,7 +1,7 @@
 ﻿@{
     Layout = "_MioLayout";
 }
-@model dynamic
+@model List<Pizza>;
 
 <div class="container">
     <div class="row mt-3">
@@ -49,7 +49,7 @@
     </table>*@
     </div>
      <div class="container d-flex">
-    @foreach(Pizza pizza in Model.Pizza)
+    @foreach(Pizza pizza in Model)
     {
         <div class="card" style="width: 18rem;">
             <img src="https://localhost:7194/img/@pizza.Image" class="card-img-top" alt="pizza">
@@ -60,11 +60,10 @@
             </div>
 
             <ul class="list-group list-group-flush">
-                    @foreach(Ingrediente ingrediente in Model.Ingrediente)
+                    @foreach(Ingrediente ingrediente in pizza.Ingredienti)
                     {
-                        <li class="list-group-item">@ingrediente.ingrediente</li>
+                        <li class="list-group-item">@ingrediente.nome</li>
                     }
-
             </ul>
 
             <div class="card-body">
@@ -91,8 +90,4 @@
         </div>
     }
     </div>
-
-    
-
-    
 </div>

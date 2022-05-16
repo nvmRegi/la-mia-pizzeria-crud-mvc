@@ -6,7 +6,7 @@ namespace La_Mia_pizzeria_static.Models
     {
         [Key]
         public int Id { get; set; }
-        public string ingrediente { get; set; }
+        public string nome { get; set; }
 
         public List<Pizza> ListaPizze { get; set; }
 

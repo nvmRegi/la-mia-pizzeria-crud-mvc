@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using La_Mia_pizzeria_static.Data;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 //using System.ComponentModel.DataAnnotations.Schema;
 
 namespace La_Mia_pizzeria_static.Models
@@ -15,6 +18,16 @@ namespace La_Mia_pizzeria_static.Models
         //[Required(ErrorMessage = "Il campo ingredienti è obbligatorio")]
         ////[Column(TypeName="text")]
         public List<Ingrediente> Ingredienti { get; set; }
+        //{
+        //    get { return Ingredienti; }
+        //    set
+        //    {
+        //        using (MenùContext db = new MenùContext())
+        //        {
+        //            Ingredienti = db.Ingrediente.FromSqlRaw("SELECT ingrediente FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiIdWHERE ListaPizzeId = " + Id).ToList<Ingrediente>();
+        //        }
+        //    }
+        //}
         
         [Required(ErrorMessage ="L'URL dell'immagine è obbligatoria")]
         public string Image { get; set; }
@@ -22,10 +35,7 @@ namespace La_Mia_pizzeria_static.Models
         [Required(ErrorMessage = "Il campo prezzo è obbligatorio")]
         public double Prezzo { get; set; }
 
-        public Pizza()
-        {
-
-        }
+        public Pizza() { }
 
         public Pizza(string nome, string image, double prezzo)
         {

@@ -1,8 +1,8 @@
 ﻿using La_Mia_pizzeria_static.Models;
 using Microsoft.AspNetCore.Mvc;
 using La_Mia_pizzeria_static.Data;
-using System.Dynamic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace La_Mia_pizzeria_static.Controllers
 {
@@ -11,14 +11,19 @@ namespace La_Mia_pizzeria_static.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            dynamic mymodel = new ExpandoObject();
+            List<Pizza> Pizze = new List<Pizza>();
+            //List<Ingrediente> Ingredienti = new List<Ingrediente>();
             //Operazione read
             using (MenùContext db = new MenùContext())
             {
-                mymodel.Pizza = db.Pizze.ToList<Pizza>();
-                mymodel.Ingrediente = db.Ingrediente.FromSqlRaw("SELECT ingrediente FROM Ingrediente JOIN");
+                Pizze = db.Pizze.ToList<Pizza>();
+                foreach(Pizza pizza in Pizze)
+                {
+                    int id = pizza.Id;
+                    pizza.Ingredienti = db.Ingrediente.FromSqlRaw($"SELECT * FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiId WHERE ListaPizzeId = {id}").ToList<Ingrediente>();
+                }
             }
-            return View(mymodel);
+            return View(Pizze);
         }
 
         [HttpGet]
@@ -31,6 +36,8 @@ namespace La_Mia_pizzeria_static.Controllers
                     Pizza pizzaFound = db.Pizze
                         .Where(pizza => pizza.Id == id)
                         .First();
+                    pizzaFound.Ingredienti = db.Ingrediente.FromSqlRaw($"SELECT * FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiId WHERE ListaPizzeId = {id}").ToList<Ingrediente>();
+                    
                     return View("Dettagli", pizzaFound);
                 }catch(InvalidOperationException ex)
                 {
