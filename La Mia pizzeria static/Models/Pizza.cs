@@ -19,15 +19,6 @@ namespace La_Mia_pizzeria_static.Models
         ////[Column(TypeName="text")]
         public List<Ingrediente> Ingredienti { get; set; }
 
-        [Required(ErrorMessage = "Il campo numero ingredienti è obbligatorio")]
-        public int _count;
-
-        public int Count
-        {
-            get { return _count; }
-            set
-        }
-
         [Required(ErrorMessage ="L'URL dell'immagine è obbligatoria")]
         public string Image { get; set; }
 
@@ -36,12 +27,12 @@ namespace La_Mia_pizzeria_static.Models
 
         public Pizza() { }
 
-        public Pizza(string nome,string image, double prezzo, int count)
+        public Pizza(string nome, List<Ingrediente> ingredienti, string image, double prezzo)
         {
             this.Nome = nome;
+            this.Ingredienti = ingredienti;
             this.Image = image;
             this.Prezzo = prezzo;
-            this.Count = count;
         }
     }
 }

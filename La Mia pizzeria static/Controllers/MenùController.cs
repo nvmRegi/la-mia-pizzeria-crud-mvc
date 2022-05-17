@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using La_Mia_pizzeria_static.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
+using System.Linq;
 
 namespace La_Mia_pizzeria_static.Controllers
 {
@@ -67,7 +68,7 @@ namespace La_Mia_pizzeria_static.Controllers
             {
                 List<Ingrediente> ingredientiPizza = nuovaPizza.Ingredienti;
 
-                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Image, nuovaPizza.Prezzo, nuovaPizza.Count);
+                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Image, nuovaPizza.Prezzo);
 
                 db.Pizze.Add(nuovaPizzaConNome);
                 db.SaveChanges();
@@ -155,6 +156,44 @@ namespace La_Mia_pizzeria_static.Controllers
                 {
                     return NotFound();
                 }
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AggiungiIngredienteAllaLista(string ingrediente)
+        {
+            using (MenùContext db = new MenùContext())
+            {
+                Ingrediente nuovoIngrediente = new Ingrediente(ingrediente);
+
+                List<Ingrediente> ingredientiDaDB = db.Ingrediente.ToList();
+
+                if (!ingredientiDaDB.Contains(nuovoIngrediente))
+                {
+                    db.Ingrediente.Add(nuovoIngrediente);
+                    db.SaveChanges();
+
+                    return RedirectToAction("FormPizza");
+                }
+                return RedirectToAction("FormPizza");
+            }
+            //List<Ingrediente> listaIngredienti;
+            //Pizza pizzaToEdit = null;
+            //using (MenùContext db = new MenùContext())
+            //{
+            //    pizzaToEdit = db.Pizze.Where(pizza => pizza.Id == id);
+            //    string sql = $"SELECT * FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiId WHERE ListaPizzeId = {id}";
+            //    listaIngredienti = db.Ingrediente.FromSqlRaw(sql).ToList<Ingrediente>();
+                
+            //    if(listaIngredienti == null)
+            //    {
+                    
+            //    }
+
+            //    //if (!listaIngredienti)
+            //    //{
+            //    //    listaIngredienti.Add(ingrediente);
+            //    //}
             }
         }
     }

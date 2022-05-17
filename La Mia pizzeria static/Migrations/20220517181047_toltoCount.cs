@@ -4,9 +4,16 @@
 
 namespace La_Mia_pizzeria_static.Migrations
 {
-    public partial class aggiuntoCount : Migration
+    public partial class toltoCount : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "Count",
+                table: "Pizze");
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
                 name: "Count",
@@ -14,13 +21,6 @@ namespace La_Mia_pizzeria_static.Migrations
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
-        }
-
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "Count",
-                table: "Pizze");
         }
     }
 }

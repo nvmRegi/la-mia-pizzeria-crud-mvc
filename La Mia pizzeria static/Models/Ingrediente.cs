@@ -11,5 +11,10 @@ namespace La_Mia_pizzeria_static.Models
         //Foreign Key
         public List<Pizza> ListaPizze { get; set; }
         public Ingrediente() { }
+
+        public Ingrediente(string nome)
+        {
+            this.nome = nome;
+        }
     }
 }
