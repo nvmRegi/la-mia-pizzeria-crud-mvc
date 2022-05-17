@@ -8,8 +8,8 @@ namespace La_Mia_pizzeria_static.Models
         public int Id { get; set; }
         public string nome { get; set; }
 
+        //Foreign Key
         public List<Pizza> ListaPizze { get; set; }
-
         public Ingrediente() { }
     }
 }

@@ -19,21 +19,24 @@
                     <span asp-validation-for="Nome" class="text-danger"></span>
                 </div>
 
-                <div class="row">
+                 <div class="row">
                     <div class="col-lg-12">
                         <div id="inputFormRow">
-                            <div class="input-group mb-3">
-                                <input asp-for="Ingredienti" type="text" class="form-control m-input" placeholder="Enter title" autocomplete="off">
-                                <div class="input-group-append">
-                                    <button id="removeRow" type="button" class="btn btn-danger">Remove</button>
+                            @foreach(Ingrediente ingrediente in Model.Ingredienti)
+                            {
+                                <div class="input-group mb-3">
+                                    <input asp-for="@ingrediente.nome" class="form-control m-input" placeholder="Enter title" autocomplete="off">
+                                    <div class="input-group-append">
+                                        <button id="removeRow" type="button" class="btn btn-danger">Remove</button>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
-
-                        <div id="newRow"></div>
+                <div id="newRow"></div>
                         <button id="addRow" type="button" class="btn btn-info">Add Row</button>
                     </div>
                 </div>
+
                 <span asp-validation-for="Ingredienti" class="text-danger"></span>
 
 @*                <div class="mb-3">

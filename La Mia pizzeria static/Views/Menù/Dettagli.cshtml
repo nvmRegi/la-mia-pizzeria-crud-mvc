@@ -20,7 +20,10 @@
             </p>
             <p>
                <strong>Ingredienti:</strong>
-               @Model.Ingredienti
+                @foreach(Ingrediente ingrediente in Model.Ingredienti)
+                {
+                    <br /> <span>- @ingrediente.nome </span>
+                }
             </p>
             <p>
                <strong>Prezzo: </strong>&euro;

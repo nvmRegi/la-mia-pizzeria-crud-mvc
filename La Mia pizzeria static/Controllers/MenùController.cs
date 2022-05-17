@@ -12,7 +12,6 @@ namespace La_Mia_pizzeria_static.Controllers
         public IActionResult Index()
         {
             List<Pizza> Pizze = new List<Pizza>();
-            //List<Ingrediente> Ingredienti = new List<Ingrediente>();
             //Operazione read
             using (MenùContext db = new MenùContext())
             {
@@ -66,7 +65,9 @@ namespace La_Mia_pizzeria_static.Controllers
 
             using(MenùContext db = new MenùContext())
             {
-                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Image, nuovaPizza.Prezzo);
+                List<Ingrediente> ingredientiPizza = nuovaPizza.Ingredienti;
+
+                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Image, nuovaPizza.Prezzo, nuovaPizza.Count);
 
                 db.Pizze.Add(nuovaPizzaConNome);
                 db.SaveChanges();
@@ -84,6 +85,7 @@ namespace La_Mia_pizzeria_static.Controllers
                 pizzaToEdit = db.Pizze
                     .Where(pizza => pizza.Id == id)
                     .First();
+                pizzaToEdit.Ingredienti = db.Ingrediente.FromSqlRaw($"SELECT * FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiId WHERE ListaPizzeId = {id}").ToList<Ingrediente>();
             }
 
             if (pizzaToEdit == null)
@@ -92,7 +94,7 @@ namespace La_Mia_pizzeria_static.Controllers
             }
             else
             {
-                return View("aggiorna", pizzaToEdit);
+                return View("Aggiorna", pizzaToEdit);
             }
         }
 
@@ -105,19 +107,21 @@ namespace La_Mia_pizzeria_static.Controllers
             }
 
             Pizza pizzaToEdit = null;
-
+            
             using(MenùContext db = new MenùContext())
             {
                 pizzaToEdit = db.Pizze
                     .Where(pizza => pizza.Id == id)
                     .First();
+                pizzaToEdit.Ingredienti = db.Ingrediente.FromSqlRaw($"SELECT * FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiId WHERE ListaPizzeId = {id}").ToList<Ingrediente>();
 
-                if(pizzaToEdit != null)
+                if (pizzaToEdit != null)
                 {
                     pizzaToEdit.Nome = model.Nome;
-                    pizzaToEdit.Ingredienti = model.Ingredienti;
                     pizzaToEdit.Image = model.Image;
-                    pizzaToEdit.Prezzo = model.Prezzo;
+                    pizzaToEdit.Prezzo = model.Prezzo;                    
+                    pizzaToEdit.Ingredienti = model.Ingredienti;
+
 
                     db.SaveChanges();
 
