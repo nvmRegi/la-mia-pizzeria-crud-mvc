@@ -68,7 +68,7 @@ namespace La_Mia_pizzeria_static.Controllers
             {
                 List<Ingrediente> ingredientiPizza = nuovaPizza.Ingredienti;
 
-                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Image, nuovaPizza.Prezzo);
+                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Ingredienti, nuovaPizza.Image, nuovaPizza.Prezzo);
 
                 db.Pizze.Add(nuovaPizzaConNome);
                 db.SaveChanges();
@@ -194,7 +194,7 @@ namespace La_Mia_pizzeria_static.Controllers
             //    //{
             //    //    listaIngredienti.Add(ingrediente);
             //    //}
-            }
+            //}
         }
     }
 }
