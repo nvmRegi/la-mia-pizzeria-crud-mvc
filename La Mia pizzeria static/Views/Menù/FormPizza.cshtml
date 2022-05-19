@@ -19,12 +19,31 @@
                     <span asp-validation-for="Nome" class="text-danger"></span>
                 </div>
 
+
+@*                <div class="mb-3">
+                    <strong>Ingredienti</strong>
+                    <select asp-for="Pizza.Ingredienti" multiple>
+                        <option value=""></option>
+                        @foreach(Ingrediente ingrediente in Model.ListaIngredienti)
+                        {
+                            if (Model.Pizza.Ingredienti.Contains(ingrediente))
+                            {
+                                <option selected value="@ingrediente.Id"> @ingrediente.nome </option>
+                            } else
+                            {
+                                <option value="@ingrediente.Id"> @ingrediente.nome </option>
+                            }
+                        }
+                    </select>
+                </div>*@
+
+
                 <div class="row">
                     <div class="col-lg-12">
 
                         <div id="inputFormRow">
                             <div class="input-group mb-3">
-                                <input asp-for="Ingredienti" class="form-control m-input" placeholder="Inserire ingrediente" autocomplete="off">
+                                <input  class="form-control m-input" placeholder="Inserire ingrediente" autocomplete="off">
                                 <div class="input-group-append">
                                     <button id="removeRow" type="button" class="btn btn-danger">Rimuovi</button>
                                 </div>
