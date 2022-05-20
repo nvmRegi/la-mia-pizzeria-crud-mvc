@@ -1,10 +1,12 @@
-﻿namespace La_Mia_pizzeria_static.Utils
+﻿using La_Mia_pizzeria_static.Models;
+
+namespace La_Mia_pizzeria_static.Utils
 {
     public class PizzePreferite
     {
-        private static List<int> ListaPizzeConId = new List<int>();
+        private static List<FavouritesDataInput> ListaPizzeConId = new List<FavouritesDataInput>();
         public PizzePreferite() { }
 
-        public static List<int> IDPizze => ListaPizzeConId;
+        public static List<FavouritesDataInput> IDPizze => ListaPizzeConId;
     }
 }

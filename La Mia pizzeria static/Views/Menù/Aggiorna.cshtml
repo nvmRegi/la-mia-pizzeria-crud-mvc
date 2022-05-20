@@ -1,4 +1,4 @@
-﻿@model Pizza
+﻿@model PizzaCategoria
 
 <div class="container">
     <div class="row">
@@ -6,23 +6,34 @@
             <div class="d-flex align-items-center">
                 <h1 class="mt-3 mb-3">Modifica Pizza</h1>
             </div>
-            <form asp-controller="Menù" asp-action="Aggiorna" asp-route-id="@Model.Id" method="post">
+            <form asp-controller="Menù" asp-action="Aggiorna" asp-route-id="@Model.Pizza.Id" method="post">
                 @Html.AntiForgeryToken()
                 <div class="mb-3">
                     <strong>Immagine:</strong>
-                    <input asp-for="Image" class="d-block w-100" />
-                    <span asp-validation-for="Image" class="text-danger"></span>
+                    <input asp-for="Pizza.Image" class="d-block w-100" />
+                    <span asp-validation-for="Pizza.Image" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <strong>Nome:</strong>
-                    <input asp-for="Nome" class="d-block w-100" />
-                    <span asp-validation-for="Nome" class="text-danger"></span>
+                    <input asp-for="Pizza.Nome" class="d-block w-100" />
+                    <span asp-validation-for="Pizza.Nome" class="text-danger"></span>
                 </div>
-
+                
+                <div class="mb-3">
+                    <strong>Categoria:</strong>
+                    <select asp-for="Pizza.CategoriaId" class="form-select" aria-label="Default select example">
+                        <option selected>Seleziona una categoria</option>
+                        @foreach(Categoria category in Model.Categorias)
+                        {
+                            <option value="@category.Id">@category.NomeCategoria</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Pizza.Nome" class="text-danger"></span>
+                </div>
                 <div class="row">
                     <div class="col-lg-12">
                         <div id="inputFormRow">
-                            @foreach(Ingrediente ingrediente in Model.Ingredienti)
+                            @foreach(Ingrediente ingrediente in Model.Pizza.Ingredienti)
                             {
                                 <div class="input-group mb-3">
                                     <input asp-for="@ingrediente.nome" class="form-control m-input" placeholder="Enter title" autocomplete="off">
@@ -37,7 +48,7 @@
                     </div>
                 </div>
 
-                <span asp-validation-for="Ingredienti" class="text-danger"></span>
+                <span asp-validation-for="Pizza.Ingredienti" class="text-danger"></span>
 
 @*                <div class="mb-3">
                     <strong>Ingredienti:</strong>
@@ -47,7 +58,7 @@
 
                 <div class="mb-3">
                     <strong>Prezzo:</strong>
-                    <input asp-for="Prezzo" class="d-block w-100" />
+                    <input asp-for="Pizza.Prezzo" class="d-block w-100" />
                 </div>
                 <div class="text-end">
                     <input type="submit" class="btn btn-small btn-success" value="Salva">

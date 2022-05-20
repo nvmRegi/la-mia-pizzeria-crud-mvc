@@ -4,6 +4,7 @@ using La_Mia_pizzeria_static.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace La_Mia_pizzeria_static.Migrations
 {
     [DbContext(typeof(MenùContext))]
-    partial class MenùContextModelSnapshot : ModelSnapshot
+    [Migration("20220520141559_aggiuntoCategoria")]
+    partial class aggiuntoCategoria
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

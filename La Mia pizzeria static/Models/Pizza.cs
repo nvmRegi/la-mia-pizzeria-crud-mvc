@@ -25,6 +25,11 @@ namespace La_Mia_pizzeria_static.Models
         [Required(ErrorMessage = "Il campo prezzo è obbligatorio")]
         public double Prezzo { get; set; }
 
+        //foreign key
+        public int? CategoriaId { get; set; }
+        public Categoria? Categoria { get; set; }
+
+
         public Pizza() { }
 
         public Pizza(string nome, List<Ingrediente> ingredienti, string image, double prezzo)

@@ -15,7 +15,13 @@
     </div>
     <div id="wait_pizza" class="row text-center">
         <div class="col-12">
-            <h3>Sto aspettando le PIZZE ...</h3>
+                <div class="loader">
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                    <div class="ball"></div>
+                    <span>Loading...</span>
+                    
+                </div>
         </div>
     </div>
     <div id="no_pizza" class="row text-center d-none">
@@ -33,7 +39,8 @@
     <script type="text/javascript">
 
         document.getElementById("search_input").addEventListener('keyup', searchItems);
-
+        
+        
         loadPizzas('');
 
         function searchItems(){
@@ -43,6 +50,7 @@
 
         function loadPizzas(searchParameter){
             document.getElementById("pizza-div").innerHTML = "";
+            
 
             axios.get('/api/Pizzas/Get',{
                 params: {
@@ -51,16 +59,24 @@
             }).then((result) =>{
                 //codice che verrà eseguito quando arrivano i dati dalla mia web api
                 console.log("Ho ricevuto le mie pizze!");
+                console.log("Lunghezza: " + result.data.length)
 
-                if(result.data.lenght == 0){
+                if(Object.keys(result.data).length == 0){
                     document.getElementById('wait_pizza').classList.add('d-none');
                     document.querySelector('no_pizza').classList.remove('d-none');
                 } else{
                     document.getElementById('wait_pizza').classList.add('d-none');
                     document.getElementById('pizza-div').classList.remove('d-none');
 
-
+                    
                     result.data.forEach(pizza => {
+
+                        var nome_categoria = "Nessun categoria associata";
+                         
+                        if(pizza.Categoria != null){
+                            nome_categoria = pizza.Categoria.NomeCategoria;
+                        }
+
                         document.getElementById('pizza-div').innerHTML +=
                         `
                         <div class="col-12 col-md-4 p-2">
@@ -70,9 +86,12 @@
                                     <h5 class="card-title">${pizza.nome}</h5>
                                     <p>&euro;${pizza.prezzo}</p>
                                 </div>
+                                <div class="card-footer">
+                                   ${nome_categoria}
+                                </div>
                                 
                                 <button id="add_fav" onclick="addFav(${pizza.id})" type="button" class="btn btn-outline-success">Aggiungi ai preferiti</button>
-                                <button id="remove_fav" type="button" class="btn btn-outline-danger d-none">Togli dai preferiti</button>
+                                <button id="remove_fav" onclick="removeFav(${pizza.id})"type="button" class="btn btn-outline-danger d-none">Togli dai preferiti</button>
                                 
                                 </div>
                                 </div>
@@ -95,33 +114,70 @@
             });
         }
 
-        //function addFav(){
-        //    axios({
-        //        method: 'post',
-        //        url: '/api/Favourite/aggiungiPreferito',
-        //        data: 
-        //    })
-        //}
+        function aggiungoFavConAxios(searchId){
+            axios.post('/api/Favourites/aggiungiPreferito', {                
+                                idPizza : searchId
+                        }).then((result) =>{
+                            console.log("Aggiungendo pizza...");
+
+                            document.getElementById("add_fav").classList.add("d-none");
+                            document.getElementById("remove_fav").classList.remove("d-none");
+
+                        }).catch((error) =>{
+                            console.log("C'è stato un errore: " + error);
+                        })
+        }
         function addFav(searchId){
-            axios.post('/api/Favourites/aggiungiPreferito', {
-                params: {
-                    idPizza : searchId
+            console.log(searchId);
+            axios.get('/api/Favourites/Get')
+            .then((result) =>{
+                
+                debugger;
+
+                console.log("------------------");
+                console.log("NUMERO PIZZE PREFERITE: " + result.data.length);
+
+                if(result.data.length == 0){
+                    console.log("Aggiungo prima pizza")
+                    console.log("dentro data e dentro id: " + result.data.id);
+                    aggiungoFavConAxios(searchId);
+                } else{
+                    console.log(result.data.length)
+                    for(let i=0; i < result.data.length; i++){
+                        console.log("dentro data e dentro id: " + result.data[i].id);
+
+                        if(result.data[i].id != searchId){
+                            console.log("Aggiungendo nuovo preferito...")
+                            aggiungoFavConAxios(searchId);
+                        }
+                    }
                 }
-            }).then((result) =>{
-                console.log("Ho aggiunto la pizza ai preferiti");
-
-                document.getElementById("add_fav").classList.add("d-none");
-                document.getElementById("remove_fav").classList.remove("d-none");
-
+                console.log("Funzione finita con " + Object.keys(result.data).length + " pizze");
 
             }).catch((error) =>{
                 console.log("C'è stato un errore: " + error);
             })
+
         }
 
-        //function removeFav(){
-        //    axios.delete()
-        //}
+        function removeFav(searchId){
+
+            console.log("Fin qui tutto ok", searchId);
+            axios.delete("/api/Favourites/togliPreferito/", {
+
+            }
+            ).then((result) =>{
+                console.log("Fin qui tutto ok");
+
+                console.log("Ho tolto la pizza dai preferiti");
+                
+                document.getElementById("add_fav").classList.remove("d-none");
+                document.getElementById("remove_fav").classList.add("d-none");
+
+            }).catch((error) =>{
+                console.log("C'è stato un errore: " + error)
+            })
+        }
 
     </script>
     

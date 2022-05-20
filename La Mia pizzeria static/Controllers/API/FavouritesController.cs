@@ -12,19 +12,19 @@ namespace La_Mia_pizzeria_static.Controllers.API
     public class FavouritesController : ControllerBase
     {
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(int? searchId)
         {
             List<Pizza> pizzePreferite = new List<Pizza>();
-            List<int> idPizze = PizzePreferite.IDPizze;
+            List<FavouritesDataInput> idPizze = PizzePreferite.IDPizze;
             if(idPizze.Count == 0 )
             {
                 return Ok(pizzePreferite);
             }
             using (MenùContext db = new MenùContext())
             {
-                for(int i = 0; i < idPizze.Count + 1; i++)
+                for(int i = 0; i < idPizze.Count; i++)
                 {
-                    Pizza daCercare = db.Pizze.FromSqlRaw($"SELECT * FROM Pizze WHERE Id = {idPizze[i]}").First();
+                    Pizza daCercare = db.Pizze.FromSqlRaw($"SELECT * FROM Pizze WHERE Id = {idPizze[i].idPizza}").First();
                     pizzePreferite.Add(daCercare);
                     foreach (Pizza pizza in pizzePreferite)
                     {
@@ -32,17 +32,34 @@ namespace La_Mia_pizzeria_static.Controllers.API
                         pizza.Ingredienti = db.Ingrediente.FromSqlRaw($"SELECT * FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiId WHERE ListaPizzeId = {id}").ToList<Ingrediente>();
                     }
                 }
-
+                if (searchId != null)
+                {
+                    Pizza pizzaFound = pizzePreferite.Find(pizza => pizza.Id == searchId);
+                    return Ok();
+                }
             }
+            
             return Ok(pizzePreferite);
         }
 
         [HttpPost]
-        public IActionResult aggiungiPreferito(int idPizza)
+        public IActionResult aggiungiPreferito([FromBody]FavouritesDataInput data)
         {
-            List<int> idPizze = PizzePreferite.IDPizze;
-            idPizze.Add(idPizza);
+            if(!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
+            List<FavouritesDataInput> idPizze = PizzePreferite.IDPizze;
+            idPizze.Add(data);
             return Ok(idPizze);
         }
+
+        //[HttpDelete("{id}")]
+        //public IActionResult togliPreferito(int id)
+        //{
+        //    List<int> idPizze = PizzePreferite.IDPizze;
+        //    idPizze.Remove(data.idPizza);
+        //    return Ok(idPizze);
+        //}
     }
 }

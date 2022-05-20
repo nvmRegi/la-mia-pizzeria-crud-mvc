@@ -17,5 +17,11 @@ namespace La_Mia_pizzeria_static.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult PizzePreferite()
+        {
+            return View("PizzePreferite");
+        }
     }
 }

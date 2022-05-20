@@ -52,24 +52,42 @@ namespace La_Mia_pizzeria_static.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View("FormPizza");
+            using (MenùContext db = new MenùContext())
+            {
+                List<Categoria> categories = db.Categoria.ToList();
+
+                PizzaCategoria model = new PizzaCategoria();
+                model.Pizza = new Pizza();
+                model.Categorias = categories;
+                return View("FormPizza", model);
+            }
+            
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Pizza nuovaPizza)
+        public IActionResult Create(PizzaCategoria data)
         {
             if(!ModelState.IsValid)
             {
-                return View("FormPizza", nuovaPizza);
+                using (MenùContext db = new MenùContext())
+                {
+                    List<Categoria> categories = db.Categoria.ToList();
+                    data.Categorias = categories;
+                }
+                return View("FormPizza", data);
             }
 
             using(MenùContext db = new MenùContext())
             {
-                List<Ingrediente> ingredientiPizza = nuovaPizza.Ingredienti;
+                List<Ingrediente> ingredientiPizza = data.Pizza.Ingredienti;
 
-                Pizza nuovaPizzaConNome = new Pizza(nuovaPizza.Nome, nuovaPizza.Ingredienti, nuovaPizza.Image, nuovaPizza.Prezzo);
-
+                Pizza nuovaPizzaConNome = new Pizza();
+                nuovaPizzaConNome.Nome = data.Pizza.Nome;
+                nuovaPizzaConNome.Ingredienti = data.Pizza.Ingredienti;
+                nuovaPizzaConNome.Image = data.Pizza.Image;
+                nuovaPizzaConNome.Prezzo = data.Pizza.Prezzo;
+                nuovaPizzaConNome.Categoria = data.Pizza.Categoria;
                 db.Pizze.Add(nuovaPizzaConNome);
                 db.SaveChanges();
             }
@@ -80,6 +98,7 @@ namespace La_Mia_pizzeria_static.Controllers
         public IActionResult Aggiorna(int id)
         {
             Pizza pizzaToEdit = null;
+            List<Categoria> categorias = new List<Categoria>();
 
             using(MenùContext db = new MenùContext())
             {
@@ -87,6 +106,7 @@ namespace La_Mia_pizzeria_static.Controllers
                     .Where(pizza => pizza.Id == id)
                     .First();
                 pizzaToEdit.Ingredienti = db.Ingrediente.FromSqlRaw($"SELECT * FROM Ingrediente JOIN IngredientePizza ON Ingrediente.Id = IngredientePizza.IngredientiId WHERE ListaPizzeId = {id}").ToList<Ingrediente>();
+                categorias = db.Categoria.ToList<Categoria>();
             }
 
             if (pizzaToEdit == null)
@@ -95,15 +115,23 @@ namespace La_Mia_pizzeria_static.Controllers
             }
             else
             {
-                return View("Aggiorna", pizzaToEdit);
+                PizzaCategoria model = new PizzaCategoria();
+                model.Pizza = pizzaToEdit;
+                model.Categorias = categorias;
+                return View("Aggiorna", model);
             }
         }
 
         [HttpPost]
-        public IActionResult Aggiorna(int id, Pizza model)
+        public IActionResult Aggiorna(int id, PizzaCategoria model)
         {
             if (!ModelState.IsValid)
             {
+                using(MenùContext db = new MenùContext())
+                {
+                    List<Categoria> categorias = db.Categoria.ToList();
+                    model.Categorias = categorias;
+                }
                 return View("Aggiorna", model);
             }
 
@@ -118,10 +146,10 @@ namespace La_Mia_pizzeria_static.Controllers
 
                 if (pizzaToEdit != null)
                 {
-                    pizzaToEdit.Nome = model.Nome;
-                    pizzaToEdit.Image = model.Image;
-                    pizzaToEdit.Prezzo = model.Prezzo;                    
-                    pizzaToEdit.Ingredienti = model.Ingredienti;
+                    pizzaToEdit.Nome = model.Pizza.Nome;
+                    pizzaToEdit.Image = model.Pizza.Image;
+                    pizzaToEdit.Prezzo = model.Pizza.Prezzo;                    
+                    pizzaToEdit.Ingredienti = model.Pizza.Ingredienti;
 
 
                     db.SaveChanges();
